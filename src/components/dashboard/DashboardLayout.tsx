@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { LogOut } from "lucide-react";
+import { DashboardNav } from "./DashboardNav";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -33,6 +34,7 @@ export function DashboardLayout({ children, userRole }: DashboardLayoutProps) {
           </Button>
         </div>
       </header>
+      <DashboardNav />
       <main className="container mx-auto px-4 py-8">{children}</main>
     </div>
   );
