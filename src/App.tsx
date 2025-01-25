@@ -6,14 +6,39 @@ import InvestorDashboard from "./pages/InvestorDashboard";
 import FarmerDashboard from "./pages/FarmerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import { DashboardLayout } from "./components/dashboard/DashboardLayout";
+import { MainNav } from "./components/navigation/MainNav";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/marketplace" element={<Marketplace />} />
-        <Route path="/project/:id" element={<ProjectDetails />} />
+        <Route
+          path="/"
+          element={
+            <>
+              <MainNav />
+              <Home />
+            </>
+          }
+        />
+        <Route
+          path="/marketplace"
+          element={
+            <>
+              <MainNav />
+              <Marketplace />
+            </>
+          }
+        />
+        <Route
+          path="/project/:id"
+          element={
+            <>
+              <MainNav />
+              <ProjectDetails />
+            </>
+          }
+        />
         <Route
           path="/investor-dashboard"
           element={
