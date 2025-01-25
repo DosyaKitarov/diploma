@@ -1,24 +1,46 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Marketplace from "./pages/Marketplace";
+import ProjectDetails from "./pages/ProjectDetails";
+import InvestorDashboard from "./pages/InvestorDashboard";
+import FarmerDashboard from "./pages/FarmerDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import { DashboardLayout } from "./components/dashboard/DashboardLayout";
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/project/:id" element={<ProjectDetails />} />
+        <Route
+          path="/investor-dashboard"
+          element={
+            <DashboardLayout userRole="investor">
+              <InvestorDashboard />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/farmer-dashboard"
+          element={
+            <DashboardLayout userRole="farmer">
+              <FarmerDashboard />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/admin-dashboard"
+          element={
+            <DashboardLayout userRole="admin">
+              <AdminDashboard />
+            </DashboardLayout>
+          }
+        />
+      </Routes>
+    </Router>
+  );
+}
 
 export default App;
