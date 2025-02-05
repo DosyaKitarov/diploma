@@ -13,10 +13,66 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+// Form schemas
+const accountFormSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  twoFactorEnabled: z.boolean().default(false),
+});
+
+const notificationFormSchema = z.object({
+  emailNotifications: z.boolean().default(true),
+  investmentUpdates: z.boolean().default(true),
+  projectMilestones: z.boolean().default(true),
+  marketingEmails: z.boolean().default(false),
+});
+
+const privacyFormSchema = z.object({
+  profileVisibility: z.boolean().default(true),
+  showInvestments: z.boolean().default(false),
+  allowMessages: z.boolean().default(true),
+});
 
 export default function Profile() {
   const { toast } = useToast();
   const [activeDialog, setActiveDialog] = useState<string | null>(null);
+
+  // Forms
+  const accountForm = useForm({
+    resolver: zodResolver(accountFormSchema),
+    defaultValues: {
+      name: "John Doe",
+      email: "john@example.com",
+      twoFactorEnabled: false,
+    },
+  });
+
+  const notificationForm = useForm({
+    resolver: zodResolver(notificationFormSchema),
+    defaultValues: {
+      emailNotifications: true,
+      investmentUpdates: true,
+      projectMilestones: true,
+      marketingEmails: false,
+    },
+  });
+
+  const privacyForm = useForm({
+    resolver: zodResolver(privacyFormSchema),
+    defaultValues: {
+      profileVisibility: true,
+      showInvestments: false,
+      allowMessages: true,
+    },
+  });
 
   const mockUser = {
     name: "John Doe",
@@ -34,7 +90,8 @@ export default function Profile() {
     },
   };
 
-  const handleSettingsSave = (setting: string) => {
+  const handleSettingsSave = (setting: string, data: any) => {
+    console.log(`Saving ${setting} settings:`, data);
     toast({
       title: "Settings Updated",
       description: `Your ${setting} settings have been saved successfully.`,
@@ -92,26 +149,55 @@ export default function Profile() {
                     Manage your account preferences and personal information.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <h4 className="font-medium">Email Preferences</h4>
-                    <p className="text-sm text-gray-500">
-                      Receive notifications about your investments, project updates, and platform news.
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-medium">Two-Factor Authentication</h4>
-                    <p className="text-sm text-gray-500">
-                      Enable additional security for your account.
-                    </p>
-                  </div>
-                  <Button 
-                    className="w-full" 
-                    onClick={() => handleSettingsSave('account')}
-                  >
-                    Save Changes
-                  </Button>
-                </div>
+                <Form {...accountForm}>
+                  <form onSubmit={accountForm.handleSubmit((data) => handleSettingsSave('account', data))} className="space-y-4">
+                    <FormField
+                      control={accountForm.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={accountForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={accountForm.control}
+                      name="twoFactorEnabled"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>Enable Two-Factor Authentication</FormLabel>
+                            <FormDescription>
+                              Add an extra layer of security to your account
+                            </FormDescription>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" className="w-full">Save Changes</Button>
+                  </form>
+                </Form>
               </DialogContent>
             </Dialog>
 
@@ -128,26 +214,71 @@ export default function Profile() {
                     Customize how and when you receive notifications.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <h4 className="font-medium">Investment Updates</h4>
-                    <p className="text-sm text-gray-500">
-                      Get notified about changes in your investment portfolio.
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-medium">Project Milestones</h4>
-                    <p className="text-sm text-gray-500">
-                      Receive updates when your supported projects reach important milestones.
-                    </p>
-                  </div>
-                  <Button 
-                    className="w-full" 
-                    onClick={() => handleSettingsSave('notification')}
-                  >
-                    Save Preferences
-                  </Button>
-                </div>
+                <Form {...notificationForm}>
+                  <form onSubmit={notificationForm.handleSubmit((data) => handleSettingsSave('notification', data))} className="space-y-4">
+                    <FormField
+                      control={notificationForm.control}
+                      name="emailNotifications"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>Email Notifications</FormLabel>
+                            <FormDescription>
+                              Receive important updates via email
+                            </FormDescription>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={notificationForm.control}
+                      name="investmentUpdates"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>Investment Updates</FormLabel>
+                            <FormDescription>
+                              Get notified about changes in your investments
+                            </FormDescription>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={notificationForm.control}
+                      name="projectMilestones"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>Project Milestones</FormLabel>
+                            <FormDescription>
+                              Receive updates about project progress
+                            </FormDescription>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" className="w-full">Save Preferences</Button>
+                  </form>
+                </Form>
               </DialogContent>
             </Dialog>
 
@@ -164,26 +295,71 @@ export default function Profile() {
                     Manage your privacy preferences and security settings.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-2">
-                    <h4 className="font-medium">Profile Visibility</h4>
-                    <p className="text-sm text-gray-500">
-                      Control who can see your investment activity and profile information.
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="font-medium">Security Settings</h4>
-                    <p className="text-sm text-gray-500">
-                      Update your password and security preferences.
-                    </p>
-                  </div>
-                  <Button 
-                    className="w-full" 
-                    onClick={() => handleSettingsSave('privacy and security')}
-                  >
-                    Update Settings
-                  </Button>
-                </div>
+                <Form {...privacyForm}>
+                  <form onSubmit={privacyForm.handleSubmit((data) => handleSettingsSave('privacy', data))} className="space-y-4">
+                    <FormField
+                      control={privacyForm.control}
+                      name="profileVisibility"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>Public Profile</FormLabel>
+                            <FormDescription>
+                              Make your profile visible to other users
+                            </FormDescription>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={privacyForm.control}
+                      name="showInvestments"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>Show Investments</FormLabel>
+                            <FormDescription>
+                              Display your investment activity on your profile
+                            </FormDescription>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={privacyForm.control}
+                      name="allowMessages"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>Allow Messages</FormLabel>
+                            <FormDescription>
+                              Let other users send you messages
+                            </FormDescription>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="submit" className="w-full">Update Settings</Button>
+                  </form>
+                </Form>
               </DialogContent>
             </Dialog>
           </CardContent>
