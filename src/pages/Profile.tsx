@@ -3,8 +3,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Award, Settings, Info, Edit, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Profile() {
+  const { toast } = useToast();
+  const [activeDialog, setActiveDialog] = useState<string | null>(null);
+
   const mockUser = {
     name: "John Doe",
     email: "john@example.com",
@@ -19,6 +32,13 @@ export default function Profile() {
       projectsSupported: 8,
       averageReturn: "12.5%",
     },
+  };
+
+  const handleSettingsSave = (setting: string) => {
+    toast({
+      title: "Settings Updated",
+      description: `Your ${setting} settings have been saved successfully.`,
+    });
   };
 
   return (
@@ -59,15 +79,113 @@ export default function Profile() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button variant="outline" className="w-full justify-start">
-              Account Settings
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              Notification Preferences
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              Privacy & Security
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full justify-start">
+                  Account Settings
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Account Settings</DialogTitle>
+                  <DialogDescription>
+                    Manage your account preferences and personal information.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Email Preferences</h4>
+                    <p className="text-sm text-gray-500">
+                      Receive notifications about your investments, project updates, and platform news.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Two-Factor Authentication</h4>
+                    <p className="text-sm text-gray-500">
+                      Enable additional security for your account.
+                    </p>
+                  </div>
+                  <Button 
+                    className="w-full" 
+                    onClick={() => handleSettingsSave('account')}
+                  >
+                    Save Changes
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full justify-start">
+                  Notification Preferences
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Notification Settings</DialogTitle>
+                  <DialogDescription>
+                    Customize how and when you receive notifications.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Investment Updates</h4>
+                    <p className="text-sm text-gray-500">
+                      Get notified about changes in your investment portfolio.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Project Milestones</h4>
+                    <p className="text-sm text-gray-500">
+                      Receive updates when your supported projects reach important milestones.
+                    </p>
+                  </div>
+                  <Button 
+                    className="w-full" 
+                    onClick={() => handleSettingsSave('notification')}
+                  >
+                    Save Preferences
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full justify-start">
+                  Privacy & Security
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Privacy & Security Settings</DialogTitle>
+                  <DialogDescription>
+                    Manage your privacy preferences and security settings.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Profile Visibility</h4>
+                    <p className="text-sm text-gray-500">
+                      Control who can see your investment activity and profile information.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Security Settings</h4>
+                    <p className="text-sm text-gray-500">
+                      Update your password and security preferences.
+                    </p>
+                  </div>
+                  <Button 
+                    className="w-full" 
+                    onClick={() => handleSettingsSave('privacy and security')}
+                  >
+                    Update Settings
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </CardContent>
         </Card>
 
