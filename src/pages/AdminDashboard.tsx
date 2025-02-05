@@ -1,8 +1,10 @@
+
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ChartContainer } from "@/components/ui/chart";
 import { Area, AreaChart, XAxis, YAxis, Tooltip } from "recharts";
 import { Users, Shield, AlertTriangle } from "lucide-react";
+import { DashboardNav } from "@/components/dashboard/DashboardNav";
 
 export default function AdminDashboard() {
   const mockData = [
@@ -14,6 +16,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <DashboardNav />
       <main className="container mx-auto px-4 py-8">
         <div className="grid gap-6 md:grid-cols-3 mb-8">
           <Card className="p-6">
