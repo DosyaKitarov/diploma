@@ -30,13 +30,15 @@ export function DashboardNav() {
             >
               Projects
             </Link>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-gray-600 hover:text-forest-500"
-            >
-              <User className="h-5 w-5" />
-            </Button>
+            <Link to="/profile">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-600 hover:text-forest-500"
+              >
+                <User className="h-5 w-5" />
+              </Button>
+            </Link>
             <Button variant="ghost" onClick={handleLogout}>
               <LogOut className="h-5 w-5" />
             </Button>
