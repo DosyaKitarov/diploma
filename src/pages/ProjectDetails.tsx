@@ -1,3 +1,4 @@
+
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -5,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartContainer } from "@/components/ui/chart";
 import { Area, AreaChart, XAxis, YAxis, Tooltip } from "recharts";
+import { DashboardNav } from "@/components/dashboard/DashboardNav";
 
 export default function ProjectDetails() {
   const { id } = useParams();
@@ -18,6 +20,7 @@ export default function ProjectDetails() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <DashboardNav />
       <main className="container mx-auto px-4 py-8">
         <Card className="mb-8">
           <div className="p-6">

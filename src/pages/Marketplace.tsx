@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -5,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 import { Search, Filter } from "lucide-react";
+import { DashboardNav } from "@/components/dashboard/DashboardNav";
 
 export default function Marketplace() {
   const navigate = useNavigate();
@@ -12,6 +14,7 @@ export default function Marketplace() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <DashboardNav />
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-forest-600 mb-4 md:mb-0">

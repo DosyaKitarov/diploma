@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -5,6 +6,7 @@ import { ChartContainer } from "@/components/ui/chart";
 import { Area, AreaChart, XAxis, YAxis, Tooltip } from "recharts";
 import { Plus, Users, Sprout, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { DashboardNav } from "@/components/dashboard/DashboardNav";
 
 export default function FarmerDashboard() {
   const navigate = useNavigate();
@@ -18,6 +20,7 @@ export default function FarmerDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <DashboardNav />
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold">Farmer Dashboard</h1>
