@@ -7,9 +7,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartContainer } from "@/components/ui/chart";
 import { Area, AreaChart, XAxis, YAxis, Tooltip } from "recharts";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
+import { useEffect, useState } from "react";
+import { LotData } from "./CreateLot";
 
 export default function ProjectDetails() {
   const { id } = useParams();
+  const [project, setProject] = useState<LotData | null>(null);
+
+  useEffect(() => {
+    // Try to find the project in approved lots
+    const approvedLots = JSON.parse(localStorage.getItem('approvedLots') || '[]');
+    const foundProject = approvedLots.find((lot: LotData) => lot.id.toString() === id);
+    if (foundProject) {
+      setProject(foundProject);
+    }
+  }, [id]);
 
   const mockData = [
     { month: "Jan", value: 1000 },
@@ -18,6 +30,19 @@ export default function ProjectDetails() {
     { month: "Apr", value: 2500 },
   ];
 
+  if (!project) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <DashboardNav />
+        <main className="container mx-auto px-4 py-8">
+          <Card className="p-6 text-center">
+            <p className="text-gray-600">Project not found.</p>
+          </Card>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <DashboardNav />
@@ -25,37 +50,67 @@ export default function ProjectDetails() {
         <Card className="mb-8">
           <div className="p-6">
             <h1 className="text-3xl font-bold text-forest-600 mb-4">
-              Sustainable Farm Project {id}
+              {project.title}
             </h1>
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <div className="h-64 bg-gray-200 rounded-lg mb-4"></div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="h-20 bg-gray-200 rounded-lg"></div>
-                  <div className="h-20 bg-gray-200 rounded-lg"></div>
-                  <div className="h-20 bg-gray-200 rounded-lg"></div>
-                </div>
+                {project.images && project.images.length > 0 ? (
+                  <>
+                    <div className="h-64 relative mb-4">
+                      <img 
+                        src={project.images[0]} 
+                        alt={project.title}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                    {project.images.length > 1 && (
+                      <div className="grid grid-cols-3 gap-4">
+                        {project.images.slice(1, 4).map((image, index) => (
+                          <div key={index} className="h-20 relative">
+                            <img 
+                              src={image} 
+                              alt={`${project.title} ${index + 2}`}
+                              className="w-full h-full object-cover rounded-lg"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="h-64 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                    <p className="text-gray-500">No images available</p>
+                  </div>
+                )}
               </div>
               <div>
                 <div className="mb-6">
                   <div className="flex justify-between mb-2">
                     <span className="text-gray-600">Funding Progress</span>
-                    <span className="font-semibold">65%</span>
+                    <span className="font-semibold">0%</span>
                   </div>
-                  <Progress value={65} className="h-2" />
+                  <Progress value={0} className="h-2" />
                 </div>
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Target Amount</span>
-                    <span className="font-semibold">$100,000</span>
+                    <span className="font-semibold">${project.targetAmount}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Expected Returns</span>
-                    <span className="font-semibold">12% Annually</span>
+                    <span className="font-semibold">{project.expectedReturns}% Annually</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Duration</span>
-                    <span className="font-semibold">24 Months</span>
+                    <span className="font-semibold">{project.duration} Months</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Location</span>
+                    <span className="font-semibold">{project.location}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Farmer</span>
+                    <span className="font-semibold">{project.farmer}</span>
                   </div>
                 </div>
                 <Button className="w-full" size="lg">
@@ -77,9 +132,7 @@ export default function ProjectDetails() {
             <Card className="p-6">
               <h2 className="text-xl font-semibold mb-4">About the Project</h2>
               <p className="text-gray-600">
-                This sustainable farming project focuses on organic crop production using innovative
-                agricultural techniques. The farm spans 100 acres and implements water-efficient
-                irrigation systems.
+                {project.description}
               </p>
             </Card>
           </TabsContent>
@@ -110,8 +163,8 @@ export default function ProjectDetails() {
               <h2 className="text-xl font-semibold mb-4">Project Updates</h2>
               <div className="space-y-4">
                 <div className="border-b pb-4">
-                  <div className="text-sm text-gray-500 mb-1">March 15, 2024</div>
-                  <p className="text-gray-600">Initial land preparation completed.</p>
+                  <div className="text-sm text-gray-500 mb-1">Project Created</div>
+                  <p className="text-gray-600">Project has been approved and listed on the marketplace.</p>
                 </div>
               </div>
             </Card>
