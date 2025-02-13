@@ -19,6 +19,7 @@ export interface LotData {
   farmer: string;
   images: string[];
   status: 'pending' | 'approved' | 'rejected';
+  feedback?: string; // Added feedback as optional property
 }
 
 export default function CreateLot() {
