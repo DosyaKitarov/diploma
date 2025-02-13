@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 import { Search, Filter } from "lucide-react";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
@@ -11,6 +10,9 @@ import { DashboardNav } from "@/components/dashboard/DashboardNav";
 export default function Marketplace() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Mock data - would come from backend, filtered to show only approved lots
+  const approvedLots = [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -37,28 +39,30 @@ export default function Marketplace() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Sample project cards - replace with actual data */}
-          {[1, 2, 3].map((id) => (
-            <Card key={id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="h-48 bg-gray-200"></div>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">Agricultural Project {id}</h3>
-                <p className="text-gray-600 mb-4">
-                  Sustainable farming initiative with expected returns of 12% annually.
-                </p>
-                <div className="flex justify-between items-center">
-                  <div className="text-sm text-gray-500">
-                    Funding: 65%
+        {approvedLots.length === 0 ? (
+          <Card className="p-6 text-center">
+            <p className="text-gray-600">No approved investment lots available at the moment.</p>
+          </Card>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {approvedLots.map((lot) => (
+              <Card key={lot.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold mb-2">{lot.title}</h3>
+                  <p className="text-gray-600 mb-4">{lot.description}</p>
+                  <div className="flex justify-between items-center">
+                    <div className="text-sm text-gray-500">
+                      Funding: {lot.fundingProgress}%
+                    </div>
+                    <Button onClick={() => navigate(`/project/${lot.id}`)}>
+                      View Details
+                    </Button>
                   </div>
-                  <Button onClick={() => navigate(`/project/${id}`)}>
-                    View Details
-                  </Button>
                 </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );
