@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,17 +9,13 @@ import { DashboardNav } from "@/components/dashboard/DashboardNav";
 export default function Marketplace() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  
-  // Mock data - would come from backend, filtered to show only approved lots
-  const [approvedLots, setApprovedLots] = useState([
-    {
-      id: 1,
-      title: "Organic Farm Expansion",
-      description: "Sustainable farming initiative with expected returns of 12% annually.",
-      fundingProgress: 45,
-      images: [],
-    },
-  ]);
+  const [approvedLots, setApprovedLots] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Load approved lots from localStorage
+    const lots = JSON.parse(localStorage.getItem('approvedLots') || '[]');
+    setApprovedLots(lots);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">

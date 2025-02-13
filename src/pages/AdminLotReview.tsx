@@ -1,30 +1,41 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
+import { LotData } from "./CreateLot";
 
 export default function AdminLotReview() {
   const { toast } = useToast();
   const [feedback, setFeedback] = useState("");
-  const [pendingLots, setPendingLots] = useState([
-    {
-      id: 1,
-      title: "Organic Farm Expansion",
-      farmer: "John Doe",
-      targetAmount: 50000,
-      expectedReturns: 12,
-      description: "Sustainable farming initiative with expected returns of 12% annually.",
-      images: [],
-    },
-  ]);
+  const [pendingLots, setPendingLots] = useState<LotData[]>([]);
+
+  useEffect(() => {
+    // Load pending lots from localStorage
+    const lots = JSON.parse(localStorage.getItem('pendingLots') || '[]');
+    setPendingLots(lots);
+  }, []);
 
   const handleApprove = (id: number) => {
-    // Here we would typically update the backend
-    setPendingLots(pendingLots.filter(lot => lot.id !== id));
+    // Update local storage
+    const updatedLots = pendingLots.filter(lot => lot.id !== id);
+    localStorage.setItem('pendingLots', JSON.stringify(updatedLots));
+    
+    // Get existing approved lots
+    const approvedLots = JSON.parse(localStorage.getItem('approvedLots') || '[]');
+    const lotToApprove = pendingLots.find(lot => lot.id === id);
+    
+    if (lotToApprove) {
+      lotToApprove.status = 'approved';
+      localStorage.setItem('approvedLots', JSON.stringify([...approvedLots, lotToApprove]));
+    }
+
+    // Update state
+    setPendingLots(updatedLots);
+    
     toast({
       title: "Lot Approved",
       description: "The investment lot has been approved and will appear in the marketplace",
@@ -40,8 +51,25 @@ export default function AdminLotReview() {
       });
       return;
     }
-    // Here we would typically update the backend
-    setPendingLots(pendingLots.filter(lot => lot.id !== id));
+
+    // Update local storage
+    const updatedLots = pendingLots.filter(lot => lot.id !== id);
+    localStorage.setItem('pendingLots', JSON.stringify(updatedLots));
+
+    // Get the rejected lot and update its status
+    const lotToReject = pendingLots.find(lot => lot.id === id);
+    if (lotToReject) {
+      lotToReject.status = 'rejected';
+      lotToReject.feedback = feedback;
+      
+      // Store rejected lots separately
+      const rejectedLots = JSON.parse(localStorage.getItem('rejectedLots') || '[]');
+      localStorage.setItem('rejectedLots', JSON.stringify([...rejectedLots, lotToReject]));
+    }
+
+    // Update state
+    setPendingLots(updatedLots);
+    
     toast({
       title: "Lot Rejected",
       description: "The feedback has been sent to the farmer",
@@ -68,6 +96,8 @@ export default function AdminLotReview() {
                     <p className="text-gray-600 mb-2">Farmer: {lot.farmer}</p>
                     <p className="text-gray-600 mb-2">Target Amount: ${lot.targetAmount}</p>
                     <p className="text-gray-600 mb-2">Expected Returns: {lot.expectedReturns}%</p>
+                    <p className="text-gray-600 mb-2">Duration: {lot.duration} months</p>
+                    <p className="text-gray-600 mb-2">Location: {lot.location}</p>
                     <p className="text-gray-600">{lot.description}</p>
                   </div>
                   <Badge>Pending Review</Badge>

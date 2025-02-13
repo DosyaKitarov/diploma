@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
 import { ImagePlus } from "lucide-react";
+
+export interface LotData {
+  id: number;
+  title: string;
+  description: string;
+  targetAmount: string;
+  expectedReturns: string;
+  duration: string;
+  location: string;
+  farmer: string;
+  images: string[];
+  status: 'pending' | 'approved' | 'rejected';
+}
 
 export default function CreateLot() {
   const navigate = useNavigate();
@@ -30,17 +42,22 @@ export default function CreateLot() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here we would typically send the data to a backend
-    const formDataToSend = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      formDataToSend.append(key, value);
-    });
-    if (images) {
-      Array.from(images).forEach((image, index) => {
-        formDataToSend.append(`image-${index}`, image);
-      });
-    }
     
+    // Create a new lot object
+    const newLot: LotData = {
+      id: Date.now(), // Use timestamp as temporary ID
+      ...formData,
+      farmer: "Current Farmer", // This would come from auth
+      images: images ? Array.from(images).map(file => URL.createObjectURL(file)) : [],
+      status: 'pending'
+    };
+
+    // Get existing lots or initialize empty array
+    const existingLots = JSON.parse(localStorage.getItem('pendingLots') || '[]');
+    
+    // Add new lot
+    localStorage.setItem('pendingLots', JSON.stringify([...existingLots, newLot]));
+
     toast({
       title: "Investment lot created",
       description: "Your lot has been submitted for approval",
