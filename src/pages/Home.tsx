@@ -1,7 +1,9 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Sprout, TrendingUp, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { DashboardNav } from "@/components/dashboard/DashboardNav";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -26,6 +28,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen gradient-bg">
+      <DashboardNav />
       <main className="container mx-auto px-4 py-16">
         <section className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-bold text-forest-600 mb-6">
