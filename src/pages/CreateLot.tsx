@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
+import { ImagePlus } from "lucide-react";
 
 export default function CreateLot() {
   const navigate = useNavigate();
@@ -19,10 +20,27 @@ export default function CreateLot() {
     duration: "",
     location: "",
   });
+  const [images, setImages] = useState<FileList | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setImages(e.target.files);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Here we would typically send the data to a backend
+    const formDataToSend = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      formDataToSend.append(key, value);
+    });
+    if (images) {
+      Array.from(images).forEach((image, index) => {
+        formDataToSend.append(`image-${index}`, image);
+      });
+    }
+    
     toast({
       title: "Investment lot created",
       description: "Your lot has been submitted for approval",
@@ -97,6 +115,37 @@ export default function CreateLot() {
                   placeholder="Project location"
                   required
                 />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Project Images</label>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageChange}
+                  className="hidden"
+                  id="image-upload"
+                />
+                <label
+                  htmlFor="image-upload"
+                  className="flex flex-col items-center justify-center cursor-pointer"
+                >
+                  <ImagePlus className="h-12 w-12 text-gray-400" />
+                  <span className="mt-2 text-sm text-gray-500">
+                    Click to upload project images
+                  </span>
+                </label>
+                {images && (
+                  <div className="mt-4 space-y-2">
+                    {Array.from(images).map((file, index) => (
+                      <div key={index} className="text-sm text-gray-600">
+                        {file.name}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
             <Button type="submit" className="w-full">Submit for Approval</Button>

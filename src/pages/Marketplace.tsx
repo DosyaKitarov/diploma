@@ -10,9 +10,17 @@ import { DashboardNav } from "@/components/dashboard/DashboardNav";
 export default function Marketplace() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-
+  
   // Mock data - would come from backend, filtered to show only approved lots
-  const approvedLots = [];
+  const [approvedLots, setApprovedLots] = useState([
+    {
+      id: 1,
+      title: "Organic Farm Expansion",
+      description: "Sustainable farming initiative with expected returns of 12% annually.",
+      fundingProgress: 45,
+      images: [],
+    },
+  ]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -47,6 +55,13 @@ export default function Marketplace() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {approvedLots.map((lot) => (
               <Card key={lot.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                {lot.images && lot.images.length > 0 && (
+                  <img
+                    src={lot.images[0]}
+                    alt={lot.title}
+                    className="w-full h-48 object-cover"
+                  />
+                )}
                 <div className="p-6">
                   <h3 className="text-xl font-semibold mb-2">{lot.title}</h3>
                   <p className="text-gray-600 mb-4">{lot.description}</p>
